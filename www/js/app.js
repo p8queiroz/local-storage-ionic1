@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ngStorage'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -21,4 +21,41 @@ angular.module('starter', ['ionic'])
       StatusBar.styleDefault();
     }
   });
+})
+
+.factory ('StorageService', function ($localStorage) {
+
+		$localStorage = $localStorage.$default({
+			things: []
+		});
+
+		var _getAll = function () {
+		  return $localStorage.things;
+		};
+
+		var _add = function (thing) {
+		  $localStorage.things.push(thing);
+		}
+
+		var _remove = function (thing) {
+		  $localStorage.things.splice($localStorage.things.indexOf(thing), 1);
+		}
+
+		return {
+			getAll: _getAll,
+			add: _add,
+			remove: _remove
+		  };
+})
+
+.controller('MainCtrl', function ($scope, StorageService) {
+
+  $scope.things = StorageService.getAll();
+
+  $scope.add = function (newThing) {
+    StorageService.add(newThing);
+  };
+  $scope.remove = function (thing) {
+    StorageService.remove(thing);
+  };
 })
